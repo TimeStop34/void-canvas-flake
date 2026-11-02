@@ -16,7 +16,7 @@
           name = "voidcanvas";
           desktopName = "VoidCanvas";
           comment = "Terminal-aesthetic ASCII art editor";
-          exec = "void_canvas";
+          exec = "${placeholder "out"}/bin/void_canvas";
           icon = "voidcanvas";                 # имя без расширения
           categories = [ "Graphics" "2DGraphics" ];
           terminal = false;
