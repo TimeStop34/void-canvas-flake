@@ -11,19 +11,17 @@
       let
         pkgs = import nixpkgs { inherit system; };
 
-        # ─── .desktop-файл ───────────────────────────────────────────────
         voidcanvas-desktop = pkgs.makeDesktopItem {
           name = "voidcanvas";
           desktopName = "VoidCanvas";
           comment = "Terminal-aesthetic ASCII art editor";
-          exec = "${placeholder "out"}/bin/void_canvas";
-          icon = "voidcanvas";                 # имя без расширения
+          exec = "void_canvas";
+          icon = "voidcanvas";
           categories = [ "Graphics" "2DGraphics" ];
           terminal = false;
           startupWMClass = "void_canvas";
         };
 
-        # ─── Сам пакет ───────────────────────────────────────────────────
         voidcanvas = pkgs.rustPlatform.buildRustPackage rec {
           pname = "voidcanvas";
           version = "2.1.0";
@@ -40,20 +38,23 @@
           nativeBuildInputs = with pkgs; [
             pkg-config
             copyDesktopItems
+            autoPatchelfHook
           ];
 
-          buildInputs = with pkgs; [
+          runtimeDependencies = with pkgs; [
+            wayland
+            libxkbcommon
+            libGL
+            stdenv.cc.cc.lib
+          ];
+
+          buildInputs = (with pkgs; [
             libx11
             libxcursor
             libxrandr
             libxi
             libxinerama
-            libxkbcommon
-            wayland
-            # Если при запуске/сборке понадобится GPU-бэкенд:
-            # libGL
-            # vulkan-loader
-          ];
+          ]) ++ runtimeDependencies;
 
           desktopItems = [ voidcanvas-desktop ];
 
